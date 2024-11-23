@@ -62,4 +62,3 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROMPTDUMP }}'
           channelId: live
           projectId: promptdump
-Then:
