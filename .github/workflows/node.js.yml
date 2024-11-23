@@ -14,36 +14,40 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        fetch-depth: 2
+        fetch-depth: 0
 
-    - name: List directory contents
+    - name: Debug Info
       run: |
-        echo "Root directory:"
-        ls -la
-        echo "Current location:"
-        pwd
+        echo "Repository contents:"
+        ls -R
+        echo "Git status:"
+        git status
         
     - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
     
-    - name: Navigate and list frontend
+    - name: Setup project
       run: |
-        echo "Attempting to find frontend directory..."
-        find . -name "frontend" -type d
-        echo "Contents of current directory:"
-        ls -la
-    
-    - name: Install Dependencies
-      run: |
-        cd frontend || exit 1
-        npm ci
+        if [ -d "frontend" ]; then
+          cd frontend
+          npm ci
+        else
+          echo "Frontend directory not found. Contents of current directory:"
+          ls -la
+          exit 1
+        fi
     
     - name: Build
       run: |
-        cd frontend || exit 1
-        npm run build
+        if [ -d "frontend" ]; then
+          cd frontend
+          npm run build
+        else
+          echo "Frontend directory not found"
+          exit 1
+        fi
     
     - name: Deploy to Firebase
       uses: FirebaseExtended/action-hosting-deploy@v0
