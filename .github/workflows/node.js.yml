@@ -17,12 +17,12 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     
     - name: Install Dependencies
       working-directory: ./frontend
-      run: npm ci
+      run: |
+        npm install
+        npm ci
     
     - name: Build
       working-directory: ./frontend
@@ -32,8 +32,4 @@ jobs:
       uses: FirebaseExtended/action-hosting-deploy@v0
       with:
         repoToken: '${{ secrets.GITHUB_TOKEN }}'
-        firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROMPTDUMP }}'
-        channelId: live
-        projectId: promptdump
-      env:
-        FIREBASE_CLI_EXPERIMENTS: webframeworks
+        firebaseServiceAccount: '${{ secrets
