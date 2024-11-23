@@ -32,8 +32,17 @@ jobs:
           cd frontend
           npm run build
       
+      - name: Check Firebase Secret
+        id: check_secret
+        run: |
+          if [ "${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROMPTDUMP }}" != "" ]; then
+            echo "has_secret=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_secret=false" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Deploy to Firebase
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROMPTDUMP != '' }}
+        if: steps.check_secret.outputs.has_secret == 'true'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
