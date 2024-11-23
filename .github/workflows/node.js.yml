@@ -16,26 +16,33 @@ jobs:
       with:
         fetch-depth: 2
 
-    - name: Debug directory structure
+    - name: List directory contents
       run: |
-        pwd
+        echo "Root directory:"
         ls -la
+        echo "Current location:"
+        pwd
         
     - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
     
+    - name: Navigate and list frontend
+      run: |
+        echo "Attempting to find frontend directory..."
+        find . -name "frontend" -type d
+        echo "Contents of current directory:"
+        ls -la
+    
     - name: Install Dependencies
       run: |
-        cd frontend
-        pwd
-        ls -la
+        cd frontend || exit 1
         npm ci
     
     - name: Build
       run: |
-        cd frontend
+        cd frontend || exit 1
         npm run build
     
     - name: Deploy to Firebase
