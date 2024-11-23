@@ -12,6 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: Debug Directory
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Directory contents:"
+          ls -la
+          
       - name: Use Node.js 18.x
         uses: actions/setup-node@v3
         with:
@@ -19,8 +26,17 @@ jobs:
       
       - name: Install Dependencies
         run: |
-          cd frontend
-          npm ci
+          if [ -d "frontend" ]; then
+            cd frontend
+            echo "Frontend directory contents:"
+            ls -la
+            npm ci
+          else
+            echo "Error: frontend directory not found"
+            echo "Contents of current directory:"
+            ls -la
+            exit 1
+          fi
       
       - name: Build
         run: |
