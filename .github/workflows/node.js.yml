@@ -9,107 +9,28 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repositoryname: Node.js CI/CD
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Debug Info
-      run: |
-        echo "Repository contents:"
-        ls -R
-        echo "Git status:"
-        git status
-        
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
-    
-    - name: Setup project
-      run: |
-        if [ -d "frontend" ]; then
+      - uses: actions/checkout@v3
+      
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      
+      - name: Install Dependencies
+        run: |
           cd frontend
           npm ci
-        else
-          echo "Frontend directory not found. Contents of current directory:"
-          ls -la
-          exit 1
-        fi
-    
-    - name: Build
-      run: |
-        if [ -d "frontend" ]; then
+      
+      - name: Build
+        run: |
           cd frontend
           npm run build
-        else
-          echo "Frontend directory not found"
-          exit 1
-        fi
-    
-    - name: Deploy to Firebase
-      uses: FirebaseExtended/action-hosting-deploy@v0
-      with:
-        repoToken: '${{ secrets.GITHUB_TOKEN }}'
-        firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROMPTDUMP }}'
-        channelId: live
-        projectId: promptdump
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Debug Info
-      run: |
-        echo "Repository contents:"
-        ls -R
-        echo "Git status:"
-        git status
-        
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
-    
-    - name: Setup project
-      run: |
-        if [ -d "frontend" ]; then
-          cd frontend
-          npm ci
-        else
-          echo "Frontend directory not found. Contents of current directory:"
-          ls -la
-          exit 1
-        fi
-    
-    - name: Build
-      run: |
-        if [ -d "frontend" ]; then
-          cd frontend
-          npm run build
-        else
-          echo "Frontend directory not found"
-          exit 1
-        fi
-    
-    - name: Deploy to Firebase
-      uses: FirebaseExtended/action-hosting-deploy@v0
-      with:
-        repoToken: '${{ secrets.GITHUB_TOKEN }}'
-        firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROMPTDUMP }}'
-        channelId: live
-        projectId: promptdump
+      
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROMPTDUMP }}'
+          channelId: live
+          projectId: promptdump
