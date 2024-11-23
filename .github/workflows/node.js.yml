@@ -18,30 +18,24 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Install Dependencies
-      run: |
-        cd frontend
-        npm ci
+    - name: List directory contents
+      run: ls -la
       
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          frontend/node_modules
-          ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-
-    - name: Build
+    - name: Install Root Dependencies
+      run: npm ci
+      
+    - name: Install Frontend Dependencies
+      working-directory: ./frontend
       run: |
-        cd frontend
-        npm run build
+        npm ci
+        
+    - name: Build Frontend
+      working-directory: ./frontend
+      run: npm run build
 
-    - name: Test
-      run: |
-        cd frontend
-        npm test -- --passWithNoTests
+    - name: Test Frontend
+      working-directory: ./frontend
+      run: npm test -- --passWithNoTests
 
   deploy:
     needs: build
@@ -59,11 +53,13 @@ jobs:
     - name: Install Firebase CLI
       run: npm install -g firebase-tools
 
-    - name: Install Dependencies and Build
+    - name: Install and Build Frontend
+      working-directory: ./frontend
       run: |
-        cd frontend
         npm ci
         npm run build
 
     - name: Deploy to Firebase
       run: firebase deploy --only hosting --token "${{ secrets.FIREBASE_TOKEN }}"
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
