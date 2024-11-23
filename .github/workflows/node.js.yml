@@ -11,20 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Debug directory structure
+      run: |
+        pwd
+        ls -la
+        
     - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
     
     - name: Install Dependencies
-      working-directory: ./frontend
-      run: npm ci
+      run: |
+        cd frontend
+        pwd
+        ls -la
+        npm ci
     
     - name: Build
-      working-directory: ./frontend
-      run: npm run build
+      run: |
+        cd frontend
+        npm run build
     
     - name: Deploy to Firebase
       uses: FirebaseExtended/action-hosting-deploy@v0
